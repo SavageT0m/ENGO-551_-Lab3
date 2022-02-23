@@ -1,0 +1,185 @@
+<html>
+<head>
+    <title> Paper Picker </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="design.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+
+</head>
+
+<style>
+body {
+  background-image: url('uofc2.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 15% 20%;
+  background-color:rgb(158, 158, 158);
+  
+}
+</style>
+
+<body>
+
+ 
+
+ <div id="text-box">
+  <h1>Building Permit Finder for the City of Calgary</h1>
+ </div>
+
+
+
+  <h3 id="small-heading">Select the Date Range below:</h3>
+  <br></br>
+  <br></br>
+  <br></br>
+  <br></br>
+
+  <div class="container">
+    <form onsubmit="DateInput(); return false;">
+      <label>From: </label>
+      <input type="date" id="fromDate">
+      
+      <label> - To: </label>
+      <input type="date" id="toDate">
+      <label> </label>
+      <label> </label>
+      <label> </label>
+      <input class="btn btn-primary" type="submit" value="Submit">
+  </form>
+  </div>
+  <br></br>
+  <div id="map_properties"></div>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <script>
+
+    let api='https://data.calgary.ca/resource/c2es-76ed.geojson?';
+
+
+
+    //------------------------------------------------------------------------------------
+    //creating a function which will collect input from the user for the Start and End date
+    //------------------------------------------------------------------------------------
+
+    async function DateInput(){ 
+
+      //Creating Start Date and End Date arguments
+      let Start_Date=document.querySelector('#fromDate').value;
+      let End_Date=document.querySelector('#toDate').value;
+
+
+
+
+
+      //Doing a check whether the dates are the same
+      if (Start_Date==End_Date){
+      
+
+        let url=api+'issueddate='+Start_Date;
+        const response = await fetch(url);
+        let data = await response.json();
+
+
+      
+        // The following function is obtained from: https://gis.stackexchange.com/questions/346104/popup-with-leaflet-markercluster-in-leaflet-map
+        var markers = L.markerClusterGroup();
+        const Geomark= L.geoJSON(data, {
+            onEachFeature : function(feature, layer){
+                var popupContent =  'Date Issued: '+feature.properties.issueddate+'<br></br>'+'Work Class Group: '+feature.properties.workclassgroup+'<br></br>'+'Contractor Name: '+feature.properties.contractorname+'<br></br>'+'Community Name: '+feature.properties.communityname+'<br></br>'+'Original Address: '+feature.properties.originaladdress;
+                layer.bindPopup(popupContent)
+            },
+        });
+        markers.addLayer(Geomark);
+        map.addLayer(markers);
+
+      }
+
+
+
+
+
+
+
+      //Checking if the input dates are different from each other
+      if(Start_Date!=End_Date)
+      {
+
+
+        //Using the dates that were received from the user to create a dynamic url
+        let url=api+'$where=issueddate > '+ '\'' + Start_Date +'\''+' and issueddate < '+'\''+ End_Date +'\'';
+        const response = await fetch(url);
+        let data = await response.json();
+        console.log(url);
+
+
+
+
+        // The following function is obtained from: https://gis.stackexchange.com/questions/346104/popup-with-leaflet-markercluster-in-leaflet-map
+        var markers = L.markerClusterGroup();
+        const Geomark= L.geoJSON(data, {
+            onEachFeature : function(feature, layer){
+                var popupContent =  'Date Issued: '+feature.properties.issueddate+'<br></br>'+'Work Class Group: '+feature.properties.workclassgroup+'<br></br>'+'Contractor Name: '+feature.properties.contractorname+'<br></br>'+'Community Name: '+feature.properties.communityname+'<br></br>'+'Original Address: '+feature.properties.originaladdress;
+                layer.bindPopup(popupContent)
+            },
+        });
+        markers.addLayer(Geomark);
+        map.addLayer(markers);
+
+    }
+  }
+
+  var points_on=L.tileLayer(
+  'https://api.mapbox.com/styles/v1/engo-551-alushi/ckzz6wuj6006x14mipiqd530z/tiles/256/{z}/{x}/{y}?access_token=' + 'pk.eyJ1IjoiZW5nby01NTEtYWx1c2hpIiwiYSI6ImNrenl6OWo0dzA1Nmozam1sM2lmamswdHgifQ.W5IR8C1S9zeBCGgbSevdAg', {
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: '© <a href="https://apps.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  });
+  //Create a layer that does NOT have the traffic crashes of 2017 from mapbox just the layer before with no points
+  var points_off=L.tileLayer(
+  'https://api.mapbox.com/styles/v1/engo-551-alushi/ckzz59zl600cm15n7bx87kagj/tiles/256/{z}/{x}/{y}?access_token=' + 'pk.eyJ1IjoiZW5nby01NTEtYWx1c2hpIiwiYSI6ImNrenl6OWo0dzA1Nmozam1sM2lmamswdHgifQ.W5IR8C1S9zeBCGgbSevdAg', {
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: '© <a href="https://apps.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  });
+
+
+
+  var map = L.map('map_properties',{
+      center:[51.0447,-114.0719],
+      zoom: 11,
+      layers:[points_on, points_off]
+    });
+
+    //These are the two basemaps to choose from
+    var baseMaps={
+      "No Traffic Accidents": points_off,
+       "Traffic Accidents":points_on
+    };
+    //add the layer control to the map
+    L.control.layers(baseMaps).addTo(map);
+
+    var popup=L.popup();
+    var popup = new L.Popup();
+    var markers = L.markerClusterGroup();
+  </script>
+
+
+</body>
+</html>
