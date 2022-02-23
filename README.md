@@ -1,28 +1,14 @@
-For lab2, the student has created a website where the use would be able to get access to building permits in the city of calgary depending on the dates that the user would input.
+# LAB 3
 
-The code consits of two main sections:
--HTML: Main.html
--Java: Design.css
+In this Lab the student had the task to implement a map with additional layers by using the code in lab 2.
 
------------------Main.html----------------
-
-In the Main.html file most of the code regrading the website can be found. 
-The implementation of the api to get the permits, the map to overlay the data on, the url for the map, heading etc... can be found here.
-
-The code is written so the user can have their input in the website and by using this input, the proper permits would be collected by the City of calgary website and be displayed in the map.
-The map is given a certain point of zoom and a zoom level. The map is intereactive as well.
+To achieve this the student had to use MapBox, add the layers that were requested and instert the final map into the existing project. The data that had to be shown in the layers of the new map, was the City of Calgary Traffic Incidents of year 2017.
+This data was to be used in CSV format so MapBox could read it.
+After the data was collected and uploaded into the map toolbox, the student had to choose how this data was going to be shown and 
+what changes he wanted to make to make the map more presentable.
+For this reason the student had added a heatmap as well.
 
 
-
-
-----------------Design.css-----------------
-
-In this part, some id-s were created to give attributes to some of the elements found in the HTML file.
-Three id-s were created, for the map and the headers.
-
-
-The following video was used to help build the code:
-https://www.youtube.com/watch?v=nZaZ2dB6pow&start=11
-
-The following code was used as reference from a github user:
-https://github.com/samrknight12/project2
+# References used for this project: 
+MapBox Website: https://docs.mapbox.com/mapbox.js/example/v1.0.0/leaflet-studio-style/
+Reference code: https://github.com/samrknight12/project3
