@@ -11,4 +11,5 @@ For this reason the student had added a heatmap as well.
 
 # References used for this project: 
 MapBox Website: https://docs.mapbox.com/mapbox.js/example/v1.0.0/leaflet-studio-style/
+
 Reference code: https://github.com/samrknight12/project3
